@@ -1,5 +1,8 @@
+import { authenticatedUser } from "@/lib/actions/actions.user";
 import Image from "next/image";
 
-export default function Home() {
-  return <main></main>;
+export default async function Home() {
+  const session = await authenticatedUser();
+
+  return <main className=""></main>;
 }
