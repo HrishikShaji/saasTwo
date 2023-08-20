@@ -47,10 +47,25 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+cart            Product[]
+
   stripe_customer_id String?
   stripe_subscription_items String?
   api_key String?
 }
+
+model Product {
+   id  String  @id @default(auto()) @map("_id") @db.ObjectId         
+   userId String @db.ObjectId
+productId String
+ productImage String
+    productName String
+    productPrice Int
+    productCurrency String
+   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
 
 model Log{
     id  String  @id @default(auto()) @map("_id") @db.ObjectId   
