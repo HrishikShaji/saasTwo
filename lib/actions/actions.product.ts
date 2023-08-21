@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { stripe } from "../stripe";
+import Stripe from "stripe";
+import { Product } from "@/types/Types";
 
 export async function AddProduct(formData: FormData) {
   if (formData) {
@@ -31,13 +33,31 @@ export async function fetchProducts() {
 
   const products = inventory.data.map((product: any) => {
     return {
-      id: product.id,
+      productId: product.id,
       name: product.name,
       image: product.images[0],
       currency: product.default_price?.currency,
       price: product.default_price?.unit_amount,
-    };
+    } as Product;
   });
 
   return products;
+}
+
+export async function fetchProduct(productId: string) {
+  const product = await stripe.products.retrieve(productId, {
+    expand: ["default_price"],
+  });
+
+  const price = product.default_price as Stripe.Price;
+  const currency = price.currency as string; // Explicitly cast currency
+  const unitAmount = price.unit_amount as number; // Explicitly cast unit_amount
+
+  return {
+    productId: product.id,
+    name: product.name,
+    image: product.images[0],
+    currency: currency,
+    price: unitAmount,
+  } as Product;
 }

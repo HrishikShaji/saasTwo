@@ -4,6 +4,9 @@ import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authUser } from "../authUser";
 import { revalidatePath } from "next/cache";
+import { stripe } from "../stripe";
+import Stripe from "stripe";
+import { CartProduct } from "@/types/Types";
 
 const prisma = new PrismaClient();
 
@@ -16,35 +19,39 @@ export async function fetchCartProducts() {
     select: {
       id: true,
       productId: true,
-      productCurrency: true,
-      productImage: true,
-      productName: true,
-      productPrice: true,
-      addedToCart: true,
     },
   });
 
-  return products;
+  const cartProducts = await Promise.all(
+    products.map(async (product) => {
+      const stripeProduct = await stripe.products.retrieve(product.productId, {
+        expand: ["default_price"],
+      });
+
+      const price = stripeProduct.default_price as Stripe.Price;
+      const currency = price.currency as string;
+      const unitAmount = price.unit_amount as number;
+
+      return {
+        id: product.id,
+        productId: stripeProduct.id,
+        name: stripeProduct.name,
+        image: stripeProduct.images[0],
+        currency: currency,
+        price: unitAmount,
+      } as CartProduct;
+    })
+  );
+
+  return cartProducts;
 }
 
-interface Product {
-  productId: string;
-  productImage: string;
-  productName: string;
-  productPrice: string;
-  productCurrency: string;
-}
-
-export async function addToCart(product: Product) {
+export async function addToCart(productId: string) {
   const { id } = await authUser();
   await prisma.product.create({
     data: {
-      productId: product.productId,
-      productImage: product.productImage,
-      productName: product.productName,
-      productPrice: Number(product.productPrice),
-      productCurrency: product.productCurrency,
-      addedToCart: true,
+      productId: productId,
+
       user: {
         connect: {
           id: id,

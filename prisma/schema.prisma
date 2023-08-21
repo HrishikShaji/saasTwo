@@ -58,11 +58,7 @@ model Product {
    id  String  @id @default(auto()) @map("_id") @db.ObjectId         
    userId String @db.ObjectId
 productId String
- productImage String
-    productName String
-    productPrice Int
-    productCurrency String
-    addedToCart Boolean
+ 
    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 

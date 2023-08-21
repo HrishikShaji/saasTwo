@@ -1,28 +1,21 @@
 import CartCard from "@/components/CartCard";
 import { fetchCartProducts } from "@/lib/actions/actions.cart";
+import { CartProduct } from "@/types/Types";
 import React from "react";
-
-interface Product {
-  id: string;
-  productId: string;
-  productImage: string;
-  productName: string;
-  productPrice: number;
-  productCurrency: string;
-}
 
 const page = async () => {
   const products = await fetchCartProducts();
   return (
     <div className="w-full flex flex-col gap-2">
-      {products.map((product: Product, i: number) => (
+      {products.map((product: CartProduct) => (
         <CartCard
-          key={i}
-          productCurrency={product.productCurrency}
-          productId={product.id}
-          productImage={product.productImage}
-          productName={product.productName}
-          productPrice={product.productPrice}
+          key={product.id}
+          id={product.id}
+          productId={product.productId}
+          name={product.name}
+          price={product.price}
+          currency={product.currency}
+          image={product.image}
         />
       ))}
     </div>
