@@ -62,6 +62,7 @@ productId String
     productName String
     productPrice Int
     productCurrency String
+    addedToCart Boolean
    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 

@@ -3,6 +3,7 @@ import { fetchCartProducts } from "@/lib/actions/actions.cart";
 import React from "react";
 
 interface Product {
+  id: string;
   productId: string;
   productImage: string;
   productName: string;
@@ -18,7 +19,7 @@ const page = async () => {
         <CartCard
           key={i}
           productCurrency={product.productCurrency}
-          productId={product.productId}
+          productId={product.id}
           productImage={product.productImage}
           productName={product.productName}
           productPrice={product.productPrice}

@@ -1,5 +1,7 @@
+"use client";
 import React from "react";
 import Image from "next/image";
+import { removeCartProducts } from "@/lib/actions/actions.cart";
 
 interface Props {
   productId: string;
@@ -9,13 +11,16 @@ interface Props {
   productCurrency: string;
 }
 
-const CartCard: React.FC<Props> = ({
+const CartCard: React.FC<Props> = async ({
   productCurrency,
   productId,
   productImage,
   productName,
   productPrice,
 }) => {
+  const handleRemove = async () => {
+    await removeCartProducts(productId);
+  };
   return (
     <div className=" p-5 flex  gap-2 justify-between items-center rounded-md bg-neutral-700">
       <Image
@@ -34,7 +39,9 @@ const CartCard: React.FC<Props> = ({
           <span className="text-xs text-gray-200"> {productCurrency}</span>
         </h1>
       </div>
-      <button className="bg-black hover:bg-neutral-900 text-white rounded-md px-3 py-2 w-full">
+      <button
+        onClick={handleRemove}
+        className="bg-black hover:bg-neutral-900 text-white rounded-md px-3 py-2 w-full">
         Remove from Cart
       </button>
     </div>

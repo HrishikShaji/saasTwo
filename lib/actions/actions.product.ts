@@ -30,8 +30,6 @@ export async function fetchProducts() {
   });
 
   const products = inventory.data.map((product: any) => {
-    console.log(product);
-
     return {
       id: product.id,
       name: product.name,
